@@ -1,0 +1,11 @@
+.env
+.vscode
+
+*.egg-info
+**/__pycache__
+
+env
+build
+dist
+tags
+tmp/**

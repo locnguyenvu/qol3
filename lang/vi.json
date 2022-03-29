@@ -1,0 +1,7 @@
+{
+    "bot.authorization_failed": "Tôi không biết bạn là ai hết!",
+    "bot.register_command.prompt_passcode": "Password để đăng ký với bot",
+    "bot.register_command.error_wrong_passcode": "Sai password rồi!!! 😒",
+    "bot.register_command.success": "Xin chào bạn mới 😎",
+    "bot.register_command.validation_user_existed": "Ô, tôi biết bạn rồi!"
+}
