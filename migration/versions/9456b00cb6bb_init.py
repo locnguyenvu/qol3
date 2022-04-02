@@ -27,13 +27,21 @@ def upgrade():
         sa.Column("updated_at", sa.DateTime),
     )
     op.create_index('idx_config_path', 'configs', ['path'])
+    op.create_unique_constraint('unique_configs_path', 'configs', ['path'])
     op.bulk_insert(tbl_config, [
         {
             "path": "fund.dcvfm.crawler.base_url_ajax",
-            "value": "https://dragoncapital.com.vn/wp-admin/admin-ajax.php",
+            "value": "",
+            "created_at": datetime.now(),
+            "updated_at": datetime.now()
+        },
+        {
+            "path": "bot.register_user.passcode",
+            "value": "",
             "created_at": datetime.now(),
             "updated_at": datetime.now()
         }
+
     ])
 
     tbl_fund = op.create_table(
@@ -110,4 +118,5 @@ def downgrade():
     op.drop_table("fund_nav_price_histories")
     op.drop_table("bot_subscribers")
     op.drop_table("bot_chat_contexts")
+    op.drop_table("users")
     pass

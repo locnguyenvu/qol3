@@ -5,7 +5,7 @@ from telegram import Bot
 from qol3.bot.message import Message
 
 class WorkFlow(metaclass=abc.ABCMeta):
-    def __subclasscheck__(cls, subclass):
+    def __subclasscheck__(self, subclass):
         return getattr(subclass, "to_dict") and callable(getattr(subclass, "to_dict"))
 
     @abc.abstractmethod

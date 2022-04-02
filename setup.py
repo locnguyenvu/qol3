@@ -14,6 +14,7 @@ setup(
         "python-telegram-bot",
         "python-dotenv",
         "psycopg2-binary",
+        "requests",
         "rich",
     ]
 )

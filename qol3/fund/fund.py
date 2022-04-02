@@ -1,6 +1,9 @@
+from datetime import datetime
 from qol3.di import get_db
 
 db = get_db()
+
+DCVFM = 'dcvfm'
 
 class Fund(db.Model):
 
@@ -15,3 +18,27 @@ class Fund(db.Model):
     update_weekday = db.Column("update_weekday", db.String(7), default="0000000")
     created_at = db.Column("created_at", db.DateTime, server_default="NOW()")
     updated_at = db.Column("updated_at", db.DateTime)
+
+    def has_updated_today(self) -> bool:
+        if not self.updated_at:
+            return False
+        today = datetime.today()
+        return today.year == self.updated_at.year \
+            and today.month == self.updated_at.month \
+            and today.day == self.updated_at.day
+
+def list_dcfvm(update_today=True):
+    query = Fund.query.filter_by(group=DCVFM)
+    if update_today:
+        today = datetime.today()
+        weekday_index = ['_'] * 7
+        weekday_index[today.weekday()] = "1"
+        query = query.filter(Fund.update_weekday.like("".join(weekday_index)))
+
+    return query.all()
+
+def get_dcvfm_by_code(code:str) -> Fund:
+    query = Fund.query \
+            .where(Fund.group == DCVFM) \
+            .where(Fund.code == code)
+    return query.first()

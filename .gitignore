@@ -1,11 +1,13 @@
 .env
+.env.*
+.venv
 .vscode
 
 *.egg-info
 **/__pycache__
 
-env
 build
 dist
 tags
 tmp/**
+pycodestyle.cfg

@@ -3,7 +3,9 @@ import re
 from qol3.user import User
 from qol3.di import get_bot
 
+
 bot = get_bot()
+
 
 class Message(object):
     """payload structure:
@@ -12,15 +14,15 @@ class Message(object):
         'message': {
             'message_id': -1,
             'from': {
-                'id': -1, 
-                'is_bot': False, 
-                'first_name': 'Loc', 
+                'id': -1,
+                'is_bot': False,
+                'first_name': 'Loc',
                 'last_name': 'Nguyen Vu',
                 'username': '*_*',
                 'language_code': 'en'
             },
             'chat': {
-                'id': -1, 
+                'id': -1,
                 'title': '++',
                 'type': '++'
             },
@@ -35,7 +37,7 @@ class Message(object):
                     'language_code': 'en'
                 },
                 'chat': {
-                    'id': -2, 
+                    'id': -2,
                     'title': '+++',
                     'type': '+++'
                 },
@@ -76,7 +78,7 @@ class Message(object):
         return self.sender["username"]
 
     def is_command(self) -> bool:
-        return re.match(r"^\/[a-zA-Z0-9]+", self.text) != None
+        return re.match(r"^\/[a-zA-Z0-9]+", self.text) is not None
 
     def get_command(self) -> str:
         chunks = self.text.split(" ")
@@ -91,7 +93,6 @@ class Message(object):
 
     def chat_id(self):
         return self.chat["id"]
-
 
     def is_a_reply(self) -> bool:
         return self.reply_to_message is not None
@@ -110,11 +111,11 @@ class Message(object):
         self.content = " ".join(mess_clean)
         pass
 
-    def has_option(self, name:str) -> bool:
+    def has_option(self, name: str) -> bool:
         for option in self.options:
             if option.find(name) >= 0:
                 return True
         return False
 
-    def reply(self, text:str, **kwarg):
+    def reply(self, text: str, **kwarg):
         self.bot.send_message(chat_id=self.chat_id(), text=text, **kwarg)
