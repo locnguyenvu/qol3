@@ -1,8 +1,7 @@
 import abc
 import inspect
-from telegram import Bot
+from telegram import Bot, Message
 
-from qol3.bot.message import Message
 
 class WorkFlow(metaclass=abc.ABCMeta):
     def __subclasscheck__(self, subclass):
