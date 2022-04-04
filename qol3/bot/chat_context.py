@@ -1,13 +1,13 @@
 import importlib
 from datetime import datetime
 from sqlalchemy import orm
-from telegram import Bot
-
-from .message import Message
+from qol3.bot.telegram import Message
 from qol3.bot.workflow.base import WorkFlow
 from qol3.di import get_db
 
+
 db = get_db()
+
 
 class ChatContext(db.Model):
 
@@ -30,8 +30,16 @@ class ChatContext(db.Model):
         handler = getattr(mod, self.handler_builder["class_name"])
         self._handler = handler(*self.handler_builder["arguments"])
 
+    def __init__(self, ctx: str, handler: WorkFlow, message: Message):
+        self.context = ctx
+        self.set_handler(handler)
+        self.is_active = 1
+        self.telegram_userid = str(message.from_user.id)
+        self.telegram_username = str(message.from_user.username)
+        self.chat_id = str(message.chat.id)
+
     def handler(self) -> WorkFlow:
-        return self._handler 
+        return self._handler
 
     def set_handler(self, handler: WorkFlow):
         self._handler = handler
@@ -48,7 +56,7 @@ class ChatContext(db.Model):
         self.handler_builder = self._handler.serialize()
 
 
-def save(model:ChatContext):
+def save(model: ChatContext):
     if not model.created_at:
         model.created_at = datetime.now()
 
@@ -57,13 +65,17 @@ def save(model:ChatContext):
     db.session.add(model)
     db.session.commit()
 
-def find_active(telegram_userid: str, chat_id: str) -> ChatContext:
-    return ChatContext.query.filter_by(telegram_userid=telegram_userid, chat_id=chat_id, is_active=1).first()
 
-def terminate_old_context(telegram_userid: str, chat_id: str):
-    db.session.query(ChatContext).filter(\
-        ChatContext.telegram_userid==telegram_userid, \
-        ChatContext.chat_id==chat_id, \
-        ChatContext.is_active==1).delete()
+def find_active(message: Message) -> ChatContext:
+    return ChatContext.query.filter_by(
+        telegram_userid=str(message.from_user.id),
+        chat_id=str(message.chat.id),
+        is_active=1
+    ).first()
 
-    
+
+def terminate_old_context(message: Message):
+    db.session.query(ChatContext).filter(
+        ChatContext.telegram_userid == str(message.from_user.id),
+        ChatContext.chat_id == str(message.chat.id),
+        ChatContext.is_active == 1).delete()

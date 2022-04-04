@@ -1,11 +1,11 @@
 from flask import current_app
-
 from qol3.bot.chat_context import ChatContext, terminate_old_context, save
-from qol3.bot.message import Message
+from qol3.bot.telegram import Message
 from qol3.bot.workflow.base import WorkFlow
 from qol3.i18n import t
 from qol3.user import exist_user
 from qol3.user import new_user
+from .base import CommandHandler
 
 
 class RegisterUser(WorkFlow):
@@ -15,36 +15,35 @@ class RegisterUser(WorkFlow):
 
     def process(self, message: Message):
         if message.is_command():
-            message.reply(t("bot.register_command.prompt_passcode"))
+            message.bot.send_message(chat_id=message.from_user.id, text=t("bot.register_command.prompt_passcode"))
             return
 
-        if message.get_content() != current_app.config.get("bot.register_user.passcode"):
-            message.reply(t("bot.register_command.error_wrong_passcode"))
+        if message.text != current_app.config.get("bot.register_user.passcode"):
+            message.bot.send_message(chat_id=message.from_user.id, text=t("bot.register_command.error_wrong_passcode"))
             return
-        user = new_user(message.sender_id(), message.sender_username())
+        user = new_user(message.from_user.id, message.from_user.username)
         self.user_id = user.id
-        message.reply(t("bot.register_command.success"))
+        message.bot.send_message(chat_id=message.from_user.id, text=t("bot.register_command.success"))
         pass
 
     def is_finish(self) -> bool:
         return hasattr(self, "user_id")
 
 
-def handle(message: Message):
-    terminate_old_context(str(message.sender_id()), str(message.chat_id()))
+class RegisterUserCommand(CommandHandler):
 
-    if exist_user(str(message.sender_id())):
-        message.reply(t("bot.register_command.validation_user_existed"))
-        return
+    def require_authentication(self) -> bool:
+        return False
 
-    workflow = RegisterUser()
-    ctx = ChatContext()
-    ctx.set_handler(workflow)
-    ctx.context = __name__
-    ctx.is_active = 1
-    ctx.telegram_userid = str(message.sender_id())
-    ctx.telegram_username = str(message.sender_username())
-    ctx.chat_id = str(message.chat_id())
-    ctx.handle(message)
-    save(ctx)
-    pass
+    def _process(self, message: Message):
+        terminate_old_context(message)
+
+        if exist_user(str(message.from_user.id)):
+            message.bot.send_message(chat_id=message.chat.id, text=t("bot.register_command.validation_user_existed"))
+            return
+
+        workflow = RegisterUser()
+        ctx = ChatContext(__name__, workflow, message)
+        ctx.handle(message)
+        save(ctx)
+        pass

@@ -1,10 +1,10 @@
-from .command import help as help_
-from .command import register_user
-from .command import subscribe
+from .command.help import HelpCommand
+from .command.register_user import RegisterUserCommand
+from .command.subscribe import SubscribeCommand
 from .dispatcher import Dispatcher
 
 
 dispatcher = Dispatcher()
-dispatcher.register_command("help", help_.handle, require_auth=False)
-dispatcher.register_command("register", register_user.handle, require_auth=False)
-dispatcher.register_command("subscribe", subscribe.handle, require_auth=True)
+dispatcher.register_command("help", HelpCommand())
+dispatcher.register_command("register", RegisterUserCommand())
+dispatcher.register_command("subscribe", SubscribeCommand())
