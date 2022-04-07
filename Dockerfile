@@ -4,7 +4,7 @@ ARG TIMEZONE
 WORKDIR /src
 
 COPY setup.py .
-RUN apk add --no-cache --virtual .build-deps g++ libffi-dev openssl-dev tzdata
+RUN apk add --no-cache --virtual .build-deps g++ libffi-dev openssl-dev tzdata chromium
 ENV TZ $TIMEZONE
 RUN python -m pip install uWSGI && \
     python -m pip install -e . && \

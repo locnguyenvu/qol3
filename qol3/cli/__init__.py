@@ -1,5 +1,6 @@
 import click
 import asyncio
+from flask import current_app
 from flask.cli import AppGroup, with_appcontext
 from pyppeteer import launch
 
@@ -24,12 +25,19 @@ def init_app(app):
         click.Command("nav-today", callback=with_appcontext(dcvfm.nav_today)),
     ]))
 
-    app.cli.add_command(click.Command("test", callback=real_test))
+    app.cli.add_command(click.Command("test", callback=with_appcontext(real_test)))
     pass
 
 
 async def test():
-    browser = await launch()
+    launch_options = {
+        'headless': True,
+        'args': ['--no-sandbox', '--disable-gpu']
+    }
+    if current_app.config.get("CHROMIUM_PATH"):
+        launch_options["executablePath"] = current_app.config.get("CHROMIUM_PATH")
+
+    browser = await launch(**launch_options)
     page = await browser.newPage()
     await page.setViewport(dict(width=1000, height=1200, isMobile=False))
     await page.goto('https://www.msn.com/vi-vn/money/indexdetails/fi-aqk2nm?duration=1D')
