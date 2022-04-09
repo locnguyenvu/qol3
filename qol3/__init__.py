@@ -1,6 +1,9 @@
 from __future__ import absolute_import
-
 from flask import Flask
+from os.path import dirname, join
+
+ASSETS_PATH = join(dirname(dirname(__file__)), "assets")
+
 
 def create_app():
     app = Flask(__name__)
@@ -18,5 +21,6 @@ def create_app():
         http.init_app(app)
 
     return app
+
 
 _ = create_app()

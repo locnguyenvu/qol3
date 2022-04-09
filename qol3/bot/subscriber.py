@@ -4,7 +4,8 @@ from qol3.di import get_db
 db = get_db()
 
 
-TOPIC_DCVFM_NAV_UPDATE = "investment.dcvfm-nav-price-update"
+TOPIC_DCVFM_NAV_UPDATE = "fund.dcvfm-nav-price-update"
+TOPIC_VNINDEX_DAILY_REPORT = "vnindex.daily-report"
 
 
 class Subscriber(db.Model):
@@ -34,3 +35,7 @@ def delete(model: Subscriber):
 
 def find_by_topic(topic: str) -> list:
     return Subscriber.query.filter_by(topic=topic).all()
+
+
+def find_by_telegram_userid(telegram_userid: int) -> list:
+    return Subscriber.query.filter_by(telegram_userid=telegram_userid).all()

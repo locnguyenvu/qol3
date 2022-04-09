@@ -1,13 +1,15 @@
 from qol3.bot.chat_context import ChatContext, terminate_old_context, save as ctx_save
 from qol3.bot.message import Message
-from qol3.bot.subscriber import Subscriber, save, TOPIC_DCVFM_NAV_UPDATE
+from qol3.bot.subscriber import Subscriber, save, TOPIC_DCVFM_NAV_UPDATE, TOPIC_VNINDEX_DAILY_REPORT
 from qol3.bot.workflow.base import WorkFlow
 from qol3.i18n import t
 
 
 prompt_message = """
 {title}
+0️⃣ {cancel}
 1️⃣ {dcvfm_desc}
+2️⃣ {vnindex_desc}
 """
 
 
@@ -20,17 +22,27 @@ class Subscribe(WorkFlow):
         if message.is_command():
             message.reply(prompt_message.format(
                 title=t("bot.subscribe_command.prompt_title"),
-                dcvfm_desc="Dragon Capital")
+                cancel="Cancel",
+                dcvfm_desc="Dragon Capital",
+                vnindex_desc="VNINDEX")
             )
             return
 
         try:
+            if message.text == '0':
+                self.has_finished = True
+                return
             if message.text == '1':
                 subscriber = Subscriber()
                 subscriber.telegram_userid = str(message.sender_id())
                 subscriber.topic = TOPIC_DCVFM_NAV_UPDATE
                 save(subscriber)
-                self.has_finished = True
+                message.reply(t("bot.subscribe_command.success"))
+            if message.text == '2':
+                subscriber = Subscriber()
+                subscriber.telegram_userid = str(message.sender_id())
+                subscriber.topic = TOPIC_VNINDEX_DAILY_REPORT
+                save(subscriber)
                 message.reply(t("bot.subscribe_command.success"))
         except ValueError:
             pass

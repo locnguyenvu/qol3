@@ -8,16 +8,17 @@ from qol3.bot.chat_context import find_active as find_active_context, save as sa
 
 bot = get_bot()
 
+
 class Dispatcher(object):
 
     def __init__(self):
         self.commands = dict()
         pass
 
-    def register_command(self, name:str, handler:Callable, require_auth=True):
+    def register_command(self, name: str, handler: Callable, require_auth=True):
         self.commands[name] = dict(handler=handler, require_auth=require_auth)
 
-    def dispatch(self, payload:dict):
+    def dispatch(self, payload: dict):
 
         if "message" in payload:
             message = Message(payload)
@@ -30,11 +31,11 @@ class Dispatcher(object):
                 handler = cmd["handler"]
                 handler(message)
                 return
-            
+
         ctx = find_active_context(str(message.sender_id()), str(message.chat_id()))
         if ctx:
             ctx.handle(message)
             save_context(ctx)
-            return 
+            return
 
         pass

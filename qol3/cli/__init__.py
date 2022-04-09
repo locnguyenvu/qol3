@@ -1,10 +1,6 @@
 import click
-import asyncio
-from flask import current_app
 from flask.cli import AppGroup, with_appcontext
-from pyppeteer import launch
-
-from . import bot, config, dcvfm
+from . import bot, config, dcvfm, vnindex
 
 
 def init_app(app):
@@ -25,28 +21,14 @@ def init_app(app):
         click.Command("nav-today", callback=with_appcontext(dcvfm.nav_today)),
     ]))
 
-    app.cli.add_command(click.Command("test", callback=with_appcontext(real_test)))
+    app.cli.add_command(AppGroup("vnindex", commands=[
+        click.Command("daily-report", callback=with_appcontext(vnindex.daily_report))
+    ]))
+    app.cli.add_command(
+        click.Command("test", callback=with_appcontext(test))
+    )
     pass
 
 
-async def test():
-    launch_options = {
-        'headless': True,
-        'args': ['--no-sandbox', '--disable-gpu']
-    }
-    if current_app.config.get("CHROMIUM_PATH"):
-        launch_options["executablePath"] = current_app.config.get("CHROMIUM_PATH")
-
-    browser = await launch(**launch_options)
-    page = await browser.newPage()
-    await page.setViewport(dict(width=1000, height=1200, isMobile=False))
-    await page.goto('https://www.msn.com/vi-vn/money/indexdetails/fi-aqk2nm?duration=1D')
-    await asyncio.sleep(3)
-    # await page.screenshot({'path': 'vnindex-original.png'})
-    await page.screenshot({'path': 'vnindex-clip.png', 'clip': {'x': 0, 'y': 202.0, 'width': 950, 'height': 798}})
-    await browser.close()
-
-
-def real_test():
-    event_loop = asyncio.get_event_loop()
-    event_loop.run_until_complete(test())
+def test():
+    pass
