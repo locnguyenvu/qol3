@@ -5,6 +5,7 @@ from qol3.di import get_db
 
 db = get_db()
 
+
 class User(db.Model):
 
     __tablename__ = "users"
@@ -16,8 +17,7 @@ class User(db.Model):
     updated_at = db.Column("updated_at", db.DateTime, nullable=False)
 
 
-
-def new_user(telegram_userid:int, telegram_username:str) -> User:
+def new_user(telegram_userid: int, telegram_username: str) -> User:
     user = User()
     user.telegram_userid = str(telegram_userid)
     user.telegram_username = telegram_username
@@ -27,6 +27,10 @@ def new_user(telegram_userid:int, telegram_username:str) -> User:
     db.session.commit()
     return user
 
-def exist_user(user_identity:str) -> bool:
-    user = User.query.filter(or_(User.telegram_userid == user_identity, User.telegram_username == user_identity)).first()
-    return user != None
+
+def exist_user(user_identity: str) -> bool:
+    user = User.query.filter(or_(
+        User.telegram_userid == user_identity,
+        User.telegram_username == user_identity)
+    ).first()
+    return user is not None

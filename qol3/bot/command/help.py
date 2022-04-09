@@ -1,5 +1,11 @@
-from qol3.bot.message import Message
+from qol3.bot.telegram import Message
+from .base import CommandHandler
 
-def handle( message:Message):
-    message.reply(text="Test")
-    return
+
+class HelpCommand(CommandHandler):
+
+    def require_authentication(self) -> bool:
+        return False
+
+    def _process(self, message: Message):
+        message.bot.send_message(chat_id=message.from_user.id, text="Test")
