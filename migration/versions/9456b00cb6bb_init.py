@@ -1,7 +1,7 @@
 """init
 
 Revision ID: 9456b00cb6bb
-Revises: 
+Revises:
 Create Date: 2022-03-29 09:19:46.905464
 
 """
@@ -19,7 +19,7 @@ depends_on = None
 
 def upgrade():
     tbl_config = op.create_table(
-        "configs", 
+        "configs",
         sa.Column("id", sa.Integer, primary_key=True, nullable=False),
         sa.Column("path", sa.String(255), nullable=False),
         sa.Column("value", sa.Text, nullable=False, default=''),
@@ -63,7 +63,7 @@ def upgrade():
         {"code": "VFMVFB", "code_alias": "DCBF", "name": "QUỸ ĐẦU TƯ TRÁI PHIẾU VIỆT NAM (VFMVFB) | VIETNAM BOND FUND", "nav_price": 0.00, "group": "dcvfm", "update_weekday": "0000100", "created_at": datetime.now()},
         {"code": "DCIP", "code_alias": "DCIP", "name": "QUỸ ĐẦU TƯ ĐỊNH HƯỚNG BẢO TOÀN VỐN VIỆT NAM | VIETNAM CAPITAL PROTECTION ORIENTED FUND", "nav_price": 0.00, "group": "dcvfm", "update_weekday": "1111100", "created_at": datetime.now()},
     ])
-    
+
     op.create_table(
         "fund_nav_price_histories",
         sa.Column("id", sa.Integer, primary_key=True, nullable=False),
@@ -77,8 +77,7 @@ def upgrade():
         sa.Column("is_active", sa.Integer, default=0),
         sa.Column("created_at", sa.DateTime, server_default="NOW()")
     )
-    op.create_index( "idx_fund_nav_price_history_dealing_date", "fund_nav_price_histories", ["dealing_date"])
-
+    op.create_index("idx_fund_nav_price_history_dealing_date", "fund_nav_price_histories", ["dealing_date"])
 
     op.create_table(
         "bot_subscribers",

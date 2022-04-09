@@ -45,7 +45,8 @@ class ajax(object):
             })
         return price_histories
 
-async def nav_today_by_fund(crawler: ajax, fund:Fund) -> Union[FundNavPriceHistory, None]:
+
+async def nav_today_by_fund(crawler: ajax, fund: Fund) -> Union[FundNavPriceHistory, None]:
     resultset = await crawler.fetch_nav_price_history(fund.code_alias)
     if not resultset or len(resultset) == 0:
         return None
@@ -61,6 +62,7 @@ async def nav_today_by_fund(crawler: ajax, fund:Fund) -> Union[FundNavPriceHisto
         mark_active(latest_change)
         return latest_change
     return None
+
 
 async def nav_today():
     funds = list_dcfvm(update_today=True)

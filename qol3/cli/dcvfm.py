@@ -2,7 +2,8 @@ import asyncio
 import time
 from datetime import datetime
 
-from qol3.bot.subscriber import find_by_topic, TOPIC_DCVFM_NAV_UPDATE
+from qol3.bot.subscriber import find_by_topic
+from qol3.bot.subscribe_topic import TOPIC_DCVFM_NAV_UPDATE
 from qol3.di import get_bot
 from qol3.fund.dcvfm.crawler import nav_today as nav_today_
 from qol3.fund.fund import list_dcfvm

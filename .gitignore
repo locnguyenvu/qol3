@@ -11,3 +11,4 @@ dist
 tags
 tmp/**
 pycodestyle.cfg
+assets
