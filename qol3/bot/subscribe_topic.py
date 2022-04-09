@@ -12,7 +12,7 @@ AVAILABLE_TOPICS = {
 def subscribe_instruction(telegram_userid: int) -> str:
     topics = find_by_telegram_userid(telegram_userid)
     message_chunks = [
-        "0️⃣ Cancel",
+        "0️⃣ Done",
     ]
 
     for key in AVAILABLE_TOPICS:

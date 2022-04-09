@@ -30,7 +30,7 @@ class RegisterUser(WorkFlow):
         return hasattr(self, "user_id")
 
 
-class RegisterUserCommand(CommandHandler):
+class RegisterCommand(CommandHandler):
 
     def require_authentication(self) -> bool:
         return False

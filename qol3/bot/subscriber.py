@@ -4,10 +4,6 @@ from qol3.di import get_db
 db = get_db()
 
 
-TOPIC_DCVFM_NAV_UPDATE = "fund.dcvfm-nav-price-update"
-TOPIC_VNINDEX_DAILY_REPORT = "vnindex.daily-report"
-
-
 class Subscriber(db.Model):
 
     __tablename__ = "bot_subscribers"
@@ -39,3 +35,17 @@ def find_by_topic(topic: str) -> list:
 
 def find_by_telegram_userid(telegram_userid: int) -> list:
     return Subscriber.query.filter_by(telegram_userid=telegram_userid).all()
+
+
+def subscribe(telegram_userid: int, topic: str):
+    existed = Subscriber.query.filter_by(telegram_userid=telegram_userid, topic=topic).first()
+    if existed is not None:
+        return
+    subscriber = Subscriber()
+    subscriber.telegram_userid = telegram_userid
+    subscriber.topic = topic
+    save(subscriber)
+
+
+def unsubscribe(telegram_userid: int, topic: str):
+    Subscriber.query.filter_by(telegram_userid=telegram_userid, topic=topic).delete()

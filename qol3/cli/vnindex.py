@@ -1,6 +1,7 @@
 import asyncio
 from os.path import basename, splitext
-from qol3.bot.subscriber import find_by_topic, TOPIC_VNINDEX_DAILY_REPORT
+from qol3.bot.subscriber import find_by_topic
+from qol3.bot.subscribe_topic import TOPIC_VNINDEX_DAILY_REPORT
 from qol3.di import get_bot
 from qol3.vnindex import chromium_crawler
 
