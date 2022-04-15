@@ -5,6 +5,7 @@ db = get_db()
 
 DCVFM = 'dcvfm'
 
+
 class Fund(db.Model):
 
     __tablename__ = 'funds'
@@ -27,6 +28,7 @@ class Fund(db.Model):
             and today.month == self.updated_at.month \
             and today.day == self.updated_at.day
 
+
 def list_dcfvm(update_today=True):
     query = Fund.query.filter_by(group=DCVFM)
     if update_today:
@@ -37,8 +39,9 @@ def list_dcfvm(update_today=True):
 
     return query.all()
 
-def get_dcvfm_by_code(code:str) -> Fund:
+
+def get_dcvfm_by_code(code: str) -> Fund:
     query = Fund.query \
-            .where(Fund.group == DCVFM) \
-            .where(Fund.code == code)
+        .where(Fund.group == DCVFM) \
+        .where(Fund.code == code)
     return query.first()
