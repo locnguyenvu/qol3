@@ -19,7 +19,7 @@ class ajax(object):
         self.session = session
         pass
 
-    async def fetch_nav_price_history(self, fund_name:str) -> list:
+    async def fetch_nav_price_history(self, fund_name: str) -> list:
         request_payload = {
             "action": "filter_old_nav_by_date",
             "selected_fund": fund_name,

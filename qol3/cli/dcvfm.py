@@ -17,18 +17,25 @@ def nav_today():
     updates = asyncio.run(nav_today_())
     elapsed = time.perf_counter() - s
     print(f"Execute in {elapsed:0.2f} second")
+
     if len(list(filter(lambda e: e is not None, updates))) == 0:
         return
-    dcvfm_funds = list_dcfvm(update_today=True)
-    dcvfm_update_today = list(filter(lambda e: e.has_updated_today(), dcvfm_funds))
-    if len(dcvfm_funds) == 0 or len(dcvfm_funds) != len(dcvfm_update_today):
-        return
-    nav_updates = find_active_by_fund_ids(list(map(lambda e: e.id, dcvfm_funds)))
 
-    changes = list(map(lambda e: str(e), nav_updates))
-    cur_date = datetime.now()
-    message = ["DCVFM nav price {}".format(cur_date.strftime("%Y-%m-%d")), "{:-<26}".format("-")] + changes
+    funds = list_dcfvm(update_today=True)
+    funds_update_today = list(filter(lambda e: e.has_updated_today(), funds))
+    if len(funds) == 0 or len(funds) != len(funds_update_today):
+        return
+
+    message_builder = ["DCVFM nav price {}".format(datetime.now().strftime("%Y-%m-%d")), "{:-<26}".format("-")]
+    nav_updates_hashmap = dict()
+    nav_updates = find_active_by_fund_ids(list(map(lambda f: f.id, funds)))
+    for update in nav_updates:
+        nav_updates_hashmap[update.fund_code] = str(update)
+    for display_order in ["DCBC", "DCDS", "DCIP", "DCBF"]:
+        if display_order not in nav_updates_hashmap:
+            continue
+        message_builder.append(nav_updates_hashmap[display_order])
 
     subscribers = find_by_topic(TOPIC_DCVFM_NAV_UPDATE)
     for subscriber in subscribers:
-        bot.send_message(chat_id=subscriber.telegram_userid, text="\n".join(message))
+        bot.send_message(chat_id=subscriber.telegram_userid, text="\n".join(message_builder))
