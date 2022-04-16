@@ -1,5 +1,6 @@
 import asyncio
 from os.path import basename, splitext
+from qol3.holiday import is_today_holiday
 from qol3.bot.subscriber import find_by_topic
 from qol3.bot.subscribe_topic import TOPIC_VNINDEX_DAILY_REPORT
 from qol3.di import get_bot
@@ -9,6 +10,8 @@ bot = get_bot()
 
 
 def daily_report():
+    if is_today_holiday():
+        return
     result = asyncio.run(chromium_crawler.screenshot_chart())
     file_binary = open(result, 'rb')
     file_name_without_extension = splitext(result)[0]
