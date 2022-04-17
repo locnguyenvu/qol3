@@ -1,8 +1,13 @@
 from __future__ import absolute_import
+import sys
+import asyncio
 from flask import Flask
 from os.path import dirname, join
 
 ASSETS_PATH = join(dirname(dirname(__file__)), "assets")
+
+if sys.platform.startswith("win"):
+    asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
 
 
 def create_app():

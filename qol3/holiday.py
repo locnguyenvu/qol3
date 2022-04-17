@@ -23,7 +23,7 @@ class Holiday(db.Model):
 def is_today_holiday() -> bool:
     today = datetime.now().strftime("%Y-%m-%d")
 
-    holiday = Holiday.query.filter(Holiday.start_at <= today, Holiday.end_at >= today).all()
+    holiday = Holiday.query.filter(Holiday.start_at <= today, Holiday.end_at >= today).first()
     return holiday is not None
 
 

@@ -16,8 +16,6 @@ bot = get_bot()
 
 def nav_today():
     s = time.perf_counter()
-    if sys.platform.startswith("win"):
-        asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
     updates = asyncio.run(nav_today_())
     elapsed = time.perf_counter() - s
     print(f"Execute in {elapsed:0.2f} second")
