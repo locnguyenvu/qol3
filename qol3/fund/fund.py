@@ -28,6 +28,11 @@ class Fund(db.Model):
             and today.month == self.updated_at.month \
             and today.day == self.updated_at.day
 
+    def is_nav_update_today(self) -> bool:
+        today = datetime.today()
+        week_day = today.weekday()
+        return self.update_weekday[week_day] == "1"
+
 
 def list_dcfvm(update_today=True):
     query = Fund.query.filter_by(group=DCVFM)

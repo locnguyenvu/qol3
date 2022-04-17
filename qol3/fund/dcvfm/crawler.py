@@ -5,10 +5,12 @@ from typing import Union
 import aiohttp
 import bs4
 from flask import current_app
+from qol3.di import get_db
 from qol3.fund.dcvfm.util import numbers
 from qol3.fund.fund import Fund, list_dcfvm
-from qol3.fund.fund_nav_price_history import (FundNavPriceHistory, existed,
-                                              mark_active)
+from qol3.fund.fund_nav_price_history import (FundNavPriceHistory, existed)
+
+db = get_db()
 
 
 class ajax(object):
@@ -51,17 +53,27 @@ async def nav_today_by_fund(crawler: ajax, fund: Fund) -> Union[FundNavPriceHist
     if not resultset or len(resultset) == 0:
         return None
     latest_result = resultset[0]
-    latest_change = FundNavPriceHistory(fund.id, fund.code_alias)
-    latest_change.dealing_date = latest_result["dealing_date"]
-    latest_change.update_date = latest_result["update_date"]
-    latest_change.price = latest_result["nav_price"]
-    latest_change.net_change = latest_result["net_change"]
-    latest_change.probation_change = latest_result["probation_change"]
 
-    if not existed(latest_change):
-        mark_active(latest_change)
-        return latest_change
-    return None
+    if existed(fund.code_alias, latest_result["dealing_date"], latest_result["nav_price"]):
+        return None
+
+    latest_change = FundNavPriceHistory(
+        fund_id=fund.id,
+        fund_code=fund.code_alias,
+        dealing_date=latest_result["dealing_date"],
+        update_date=latest_result["update_date"],
+        price=latest_result["nav_price"],
+        net_change=latest_result["net_change"],
+        probation_change=latest_result["probation_change"])
+
+    fund.nav_price = latest_change.price
+    fund.updated_at = datetime.now()
+
+    db.session.add(latest_change)
+    db.session.add(fund)
+    db.session.commit()
+
+    return latest_change
 
 
 async def nav_today():

@@ -1,7 +1,5 @@
 from datetime import datetime
-
 from qol3.di import get_db
-from qol3.fund.fund import Fund
 
 db = get_db()
 
@@ -18,45 +16,41 @@ class FundNavPriceHistory(db.Model):
     price = db.Column("price", db.Numeric(10, 2), nullable=False)
     net_change = db.Column("net_change", db.Numeric(10, 2), nullable=False)
     probation_change = db.Column("probation_change", db.Numeric(10, 2), nullable=False)
-    is_active = db.Column("is_active", db.Integer, default=0)
     created_at = db.Column("created_at", db.DateTime, server_default="NOW()")
 
-    def __init__(self, fund_id: str, fund_code: str):
+    def __init__(self, fund_id: str, fund_code: str, dealing_date: str, update_date: str, price: float, net_change: float, probation_change: float):
         self.fund_id = fund_id
         self.fund_code = fund_code
+        self.dealing_date = dealing_date
+        self.update_date = update_date
+        self.price = price
+        self.net_change = net_change
+        self.probation_change = probation_change
+        self.created_at = datetime.now()
 
-    def __str__(self) -> str:
-        change_symbol = "▴"
+    def to_telegram_markdown_message(self) -> str:
+        decorate_symbol = "📈"
+        change_symbol = "+"
         if self.net_change < 0:
-            change_symbol = "▿"
+            decorate_symbol = "📉"
+            change_symbol = "-"
 
-        return "{:<6} {:>7,} ({}{}%)".format(str(self.fund_code).upper(), self.price, change_symbol, abs(self.probation_change))
-
-
-def save(model: FundNavPriceHistory):
-    if not model.created_at:
-        model.created_at = datetime.now()
-    db.session.add(model)
-    db.session.commit()
+        return f"{decorate_symbol}`{self.fund_code:<6}` `{self.price:>12,}` `({change_symbol}{abs(self.probation_change)})`"
 
 
-def existed(model: FundNavPriceHistory) -> bool:
-    existed = FundNavPriceHistory.query \
-        .where(FundNavPriceHistory.fund_id == model.fund_id) \
-        .where(FundNavPriceHistory.fund_code == model.fund_code) \
-        .where(FundNavPriceHistory.dealing_date == model.dealing_date) \
-        .where(FundNavPriceHistory.price == model.price) \
+def existed(fund_code: str, dealing_date: str, price: float) -> bool:
+    record = FundNavPriceHistory.query \
+        .where(FundNavPriceHistory.fund_code == fund_code) \
+        .where(FundNavPriceHistory.dealing_date == dealing_date) \
+        .where(FundNavPriceHistory.price == price) \
         .first()
-    return existed is not None
+    return record is not None
 
 
-def mark_active(navPrice: FundNavPriceHistory):
-    FundNavPriceHistory.query.filter_by(fund_id=navPrice.fund_id, is_active=1).update({"is_active": 0})
-    Fund.query.filter_by(id=navPrice.fund_id).update({"nav_price": navPrice.price, "updated_at": datetime.now()})
-    navPrice.is_active = 1
-    save(navPrice)
-
-
-def find_active_by_fund_ids(fund_ids: list) -> list:
-    query = FundNavPriceHistory.query.filter_by(is_active=1).filter(FundNavPriceHistory.fund_id.in_(fund_ids))
+def find_changes_today_by_fund_codes(fund_codes: list) -> list:
+    today = datetime.now().replace(hour=0, minute=0, second=0)
+    query = FundNavPriceHistory.query.filter(
+        FundNavPriceHistory.fund_code.in_(fund_codes),
+        FundNavPriceHistory.created_at >= today
+    )
     return query.all()

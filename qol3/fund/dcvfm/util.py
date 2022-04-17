@@ -3,11 +3,11 @@ class numbers(object):
     GENERAL_THOUSAND_SEPARATOR = ","
     GENERAL_DECIMAL_POINT = "."
 
-    VN_THOUSAND_SEPARATOR = "." 
+    VN_THOUSAND_SEPARATOR = "."
     VN_DECIMAL_POINT = ","
 
     @classmethod
-    def float_(cls, input:str, precision=2) -> float:
+    def float_(cls, input: str, precision=2) -> float:
         """
         Convert 76,098.37 => float(76098.37)
         """
@@ -15,7 +15,7 @@ class numbers(object):
         return round(float(number), precision)
 
     @classmethod
-    def vncurrencyformat_tofloat(cls, input:str, precision=2) -> float:
+    def vncurrencyformat_tofloat(cls, input: str, precision=2) -> float:
         """
         Convert 76.098,37 => float(76098.37)
         """

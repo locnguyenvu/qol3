@@ -1,4 +1,6 @@
 import asyncio
+import sys
+import telegram
 import time
 from datetime import datetime
 
@@ -7,7 +9,7 @@ from qol3.bot.subscribe_topic import TOPIC_DCVFM_NAV_UPDATE
 from qol3.di import get_bot
 from qol3.fund.dcvfm.crawler import nav_today as nav_today_
 from qol3.fund.fund import list_dcfvm
-from qol3.fund.fund_nav_price_history import find_active_by_fund_ids
+from qol3.fund.fund_nav_price_history import find_changes_today_by_fund_codes
 
 bot = get_bot()
 
@@ -26,11 +28,11 @@ def nav_today():
     if len(funds) == 0 or len(funds) != len(funds_update_today):
         return
 
-    message_builder = ["DCVFM nav price {}".format(datetime.now().strftime("%Y-%m-%d")), "{:-<26}".format("-")]
+    message_builder = ["DCVFM nav price {}".format(datetime.now().strftime("%d.%m.%Y")), ""]
     nav_updates_hashmap = dict()
-    nav_updates = find_active_by_fund_ids(list(map(lambda f: f.id, funds)))
+    nav_updates = find_changes_today_by_fund_codes(list(map(lambda f: f.code_alias, funds)))
     for update in nav_updates:
-        nav_updates_hashmap[update.fund_code] = str(update)
+        nav_updates_hashmap[update.fund_code] = update.to_telegram_markdown_message()
     for display_order in ["DCBC", "DCDS", "DCIP", "DCBF"]:
         if display_order not in nav_updates_hashmap:
             continue
@@ -38,4 +40,4 @@ def nav_today():
 
     subscribers = find_by_topic(TOPIC_DCVFM_NAV_UPDATE)
     for subscriber in subscribers:
-        bot.send_message(chat_id=subscriber.telegram_userid, text="\n".join(message_builder))
+        bot.send_message(chat_id=subscriber.telegram_userid, text="\n".join(message_builder), parse_mode=telegram.ParseMode.MARKDOWN)
