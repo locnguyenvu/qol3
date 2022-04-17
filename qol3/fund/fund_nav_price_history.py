@@ -35,16 +35,16 @@ class FundNavPriceHistory(db.Model):
             decorate_symbol = "📉"
             change_symbol = "-"
 
-        return decorate_symbol + "`{:<6}` `{:>12,}` `({}{}%)`".format(str(self.fund_code).upper(), self.price, change_symbol, abs(self.probation_change))
+        return f"{decorate_symbol}`{self.fund_code:<6}` `{self.price:>12,}` `({change_symbol}{abs(self.probation_change)})`"
 
 
 def existed(fund_code: str, dealing_date: str, price: float) -> bool:
-    existed = FundNavPriceHistory.query \
+    record = FundNavPriceHistory.query \
         .where(FundNavPriceHistory.fund_code == fund_code) \
         .where(FundNavPriceHistory.dealing_date == dealing_date) \
         .where(FundNavPriceHistory.price == price) \
         .first()
-    return existed is not None
+    return record is not None
 
 
 def find_changes_today_by_fund_codes(fund_codes: list) -> list:
