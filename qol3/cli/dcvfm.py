@@ -1,5 +1,4 @@
 import asyncio
-import sys
 import telegram
 import time
 from datetime import datetime

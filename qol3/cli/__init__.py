@@ -24,6 +24,7 @@ def init_app(app):
             click.Argument(["end-at"], required=True)])
     ]))
     app.cli.add_command(AppGroup("vnindex", commands=[
-        click.Command("daily-report", callback=with_appcontext(vnindex.daily_report))
+        click.Command("end-session-chart", callback=with_appcontext(vnindex.end_session_chart)),
+        click.Command("end-session-summary", callback=with_appcontext(vnindex.end_session_summary))
     ]))
     pass
