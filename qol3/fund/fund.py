@@ -19,6 +19,7 @@ class Fund(db.Model):
     update_weekday = db.Column("update_weekday", db.String(7), default="0000000")
     created_at = db.Column("created_at", db.DateTime, server_default="NOW()")
     updated_at = db.Column("updated_at", db.DateTime)
+    last_dealing_date = db.Column("last_dealing_date", db.Date)
 
     def has_updated_today(self) -> bool:
         if not self.updated_at:
@@ -32,6 +33,12 @@ class Fund(db.Model):
         today = datetime.today()
         week_day = today.weekday()
         return self.update_weekday[week_day] == "1"
+
+    def has_today_nav_price(self) -> bool:
+        if not self.last_dealing_date:
+            return False
+        today = datetime.today()
+        return self.last_dealing_date.strftime("%Y-%m-%d") == today.strftime("%Y-%m-%d")
 
 
 def list_dcfvm(update_today=True):
