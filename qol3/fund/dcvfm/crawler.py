@@ -68,6 +68,7 @@ async def nav_today_by_fund(crawler: ajax, fund: Fund) -> Union[FundNavPriceHist
 
     fund.nav_price = latest_change.price
     fund.updated_at = datetime.now()
+    fund.last_dealing_date = latest_change.dealing_date
 
     db.session.add(latest_change)
     db.session.add(fund)
@@ -83,7 +84,7 @@ async def nav_today():
         crawler = ajax(session=session)
         tasks = []
         for fund in funds:
-            if not fund.has_updated_today():
+            if not fund.has_today_nav_price():
                 tasks.append(nav_today_by_fund(crawler, fund))
 
         result = await asyncio.gather(*tasks)
