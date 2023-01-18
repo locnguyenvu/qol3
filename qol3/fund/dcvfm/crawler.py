@@ -1,4 +1,5 @@
 import asyncio
+import re
 from datetime import datetime
 from typing import Union
 
@@ -40,7 +41,7 @@ class ajax(object):
                 continue
             price_histories.append({
                 "update_date": datetime.strptime(columns[0].text, "%d/%m/%Y"),
-                "dealing_date": datetime.strptime(columns[1].text, "%d/%m/%Y"),
+                "dealing_date": datetime.strptime(columns[1].text, "%d/%m/%Y") if re.match('\d{2}/\d{2}/\d{4}', columns[1].text) is not None else datetime.now(),
                 "nav_price": numbers.vncurrencyformat_tofloat(columns[2].text),
                 "net_change": numbers.float_(columns[3].text),
                 "probation_change": float(columns[4].text.replace("%", "")),
