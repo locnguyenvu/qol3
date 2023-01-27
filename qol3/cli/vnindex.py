@@ -39,5 +39,5 @@ VNINDEX: *{summary.post_str()}*
     for subscriber in subscribers:
         asyncio.run(bot.send_message(chat_id=subscriber.telegram_userid,
                          text=message,
-                         parse_mode=telegram.ParseMode.MARKDOWN_V2,
+                         parse_mode=telegram.constants.ParseMode.MARKDOWN_V2,
                          disable_web_page_preview=True))
