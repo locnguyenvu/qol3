@@ -1,4 +1,4 @@
 # do daily/weekly/monthly maintenance
 # min	hour	day	    month	weekday	command
 */15    *       *       *       1-5     flask dcvfm nav-today
-15      05      *       *       1-5     flask vnindex end-session-summary
+05      15      *       *       1-5     flask vnindex end-session-summary
