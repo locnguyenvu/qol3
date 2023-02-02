@@ -39,4 +39,4 @@ def nav_today():
 
     subscribers = find_by_topic(TOPIC_DCVFM_NAV_UPDATE)
     for subscriber in subscribers:
-        bot.send_message(chat_id=subscriber.telegram_userid, text="\n".join(message_builder), parse_mode=telegram.ParseMode.MARKDOWN)
+        bot.send_message(chat_id=subscriber.telegram_userid, text="\n".join(message_builder), parse_mode=telegram.constants.ParseMode.MARKDOWN)
