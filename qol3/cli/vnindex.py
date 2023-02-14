@@ -38,6 +38,6 @@ VNINDEX: *{summary.post_str()}*
     subscribers = find_by_topic(TOPIC_VNINDEX_DAILY_REPORT)
     for subscriber in subscribers:
         asyncio.run(bot.send_message(chat_id=subscriber.telegram_userid,
-                         text=message,
-                         parse_mode=telegram.constants.ParseMode.MARKDOWN_V2,
-                         disable_web_page_preview=True))
+                                     text=message,
+                                     parse_mode=telegram.constants.ParseMode.MARKDOWN_V2,
+                                     disable_web_page_preview=True))
